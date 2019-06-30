@@ -6,6 +6,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.concurrent.Delayed;
+
 import org.json.JSONObject;
 
 import com.android.volley.AuthFailureError;
@@ -51,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         // 4. Sending json message to Server
         JsonObjectRequest request = new JsonObjectRequest(
             Request.Method.POST,
-            "http://10.0.2.2:8080/authenticate",
+            "http://10.100.241.224:8080/authenticate",
             jsonMessage,
             new Response.Listener<JSONObject>() {
                 @Override
@@ -60,12 +62,14 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         String message = response.getString("message");
                         if(message.equals("Authorized")) {
-                            showMessage("Authenticated");
+                            showMessage("Logged!");
+                            Intent intentCurrent=new Intent(LoginActivity.this,ChatActivity.class);
+                            LoginActivity.this.startActivity(intentCurrent);
                         }
                         else {
                             showMessage("Wrong username or password");
                         }
-                        showMessage(response.toString());
+                        //showMessage(response.toString());
                     }catch (Exception e) {
                         e.printStackTrace();
                         showMessage(e.getMessage());
