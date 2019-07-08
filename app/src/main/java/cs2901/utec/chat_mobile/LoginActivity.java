@@ -1,13 +1,12 @@
 package cs2901.utec.chat_mobile;
 
+import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.concurrent.Delayed;
-
 import org.json.JSONObject;
 
 import com.android.volley.AuthFailureError;
@@ -25,6 +24,9 @@ import android.view.View;
 
 public class LoginActivity extends AppCompatActivity {
 
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +35,10 @@ public class LoginActivity extends AppCompatActivity {
 
     public void showMessage(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    public Activity getActivity(){
+        return this;
     }
 
     public void onBtnLoginClicked(View view) {
@@ -53,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         // 4. Sending json message to Server
         JsonObjectRequest request = new JsonObjectRequest(
             Request.Method.POST,
-            "http://10.100.241.224:8080/authenticate",
+            "http://192.168.1.8:8080/authenticate_mb",
             jsonMessage,
             new Response.Listener<JSONObject>() {
                 @Override
@@ -63,8 +69,10 @@ public class LoginActivity extends AppCompatActivity {
                         String message = response.getString("message");
                         if(message.equals("Authorized")) {
                             showMessage("Logged!");
-                            Intent intentCurrent=new Intent(LoginActivity.this,ChatActivity.class);
-                            LoginActivity.this.startActivity(intentCurrent);
+                            Intent intent = new Intent(getActivity(), ContactsActivity.class);
+                            intent.putExtra("user_id", response.getInt("user_id"));
+                            intent.putExtra("username", response.getString("username"));
+                            startActivity(intent);
                         }
                         else {
                             showMessage("Wrong username or password");
